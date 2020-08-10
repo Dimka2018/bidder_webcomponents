@@ -48,3 +48,5 @@ class Lot extends HTMLElement {
         `
     }
 }
+
+customElements.define('bid-lot', Lot);

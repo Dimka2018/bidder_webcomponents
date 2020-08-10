@@ -1,38 +1,32 @@
 class Welcome extends HTMLElement {
 
-    constructor(props, context) {
-        super(props, context);
-        this.loginTitles = {
-            title: "Log in",
-            loginPlaceholder: "login",
-            passwordPlaceholder: "password",
-            buttonText: "Log in",
-            linkText: "Registration"
-        };
+    constructor() {
+        super();
 
-        this.registrationTitles = {
-            title: "Registration",
-            loginPlaceholder: "login",
-            passwordPlaceholder: "password",
-            buttonText: "Registrate",
-            linkText: "Log in"
-        };
+        this.error = '';
+        this.registrationMode = false;
 
-        this.controller = new WelcomeController(React.createContext({}));
+        this.controller = new WelcomeController();
 
         this.loginCallbacks = {
-            onButtonClick: this.login.bind(this),
-            onLinkClick: this.toggleMode.bind(this)
+            onButtonClick: this.login.bind(this)
         };
 
         this.registrationCallbacks = {
             onButtonClick: this.register.bind(this),
             onLinkClick: this.toggleMode.bind(this)
         };
+
     }
 
     connectedCallback() {
         this.innerHTML = this.getTemplate();
+    }
+
+    toggleMode() {
+        for (let form of this.querySelectorAll('welcome-form')) {
+            form.classList.toggle('none');
+        }
     }
 
     login(login, password) {
@@ -44,27 +38,18 @@ class Welcome extends HTMLElement {
     register(login, password) {
         this.controller.register(login, password)
             .then(() => this.login(login, password),
-                error => this.setState({error: error}))
-    }
-
-    state = {
-        registrationMode: false,
-        error: ""
-    };
-
-    toggleMode() {
-        this.setState({registrationMode: !this.state.registrationMode})
+                error => this.error = error)
     }
 
     getTemplate() {
         return `
         <div>
-            {!this.state.registrationMode &&
-            <WelcomeForm titles={this.loginTitles} callbacks={this.loginCallbacks}/>}
-            {this.state.registrationMode &&
-            <WelcomeForm titles={this.registrationTitles} callbacks={this.registrationCallbacks}/>}
-            <div class="error_message">{this.state.error}</div>
+            <welcome-form class="login_form" title="Log in" loginPlaceholder="login" passwordPlaceholder="password" buttonText="Log in" linkText="Registration"/>
+            <welcome-form class="registration_form none" title="Registration" loginPlaceholder="login" passwordPlaceholder="password" buttonText="Registrate" linkText="Log in"/>
+            <div class="error_message">${this.error || ''}</div>
         </div>
         `
     }
 }
+
+customElements.define('welcome-page', Welcome);
