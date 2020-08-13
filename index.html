@@ -23,7 +23,22 @@
 
 <body>
 
-<welcome-page/>
+<welcome-page class="welcome_page"/>
+<bid-page class="bid_page none"/>
+
+<script>
+    function switchPages() {
+        document.querySelector('.welcome_page').classList.toggle('none');
+        document.querySelector('.bid_page').classList.toggle('none');
+    }
+
+    document.addEventListener('loggedIn', e => {
+        switchPages();
+    });
+    document.addEventListener('logout', e => {
+        switchPages();
+    });
+</script>
 
 </body>
 </html>
