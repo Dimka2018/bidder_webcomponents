@@ -12,6 +12,13 @@ class Bid extends HTMLElement {
         this.innerHTML = this.getTemplate();
         this.querySelector('.logout_butt').addEventListener('click', e => this.emmitEvent('logout'));
         this.loadLots();
+        this.addEventListener('placeBid', e => {
+            this.controller.saveOrUpdateProduct()
+            this.toggleModal();
+        });
+        this.addEventListener('cancel', e => {
+            this.toggleModal();
+        });
     }
 
     isSold(product) {
@@ -49,20 +56,33 @@ class Bid extends HTMLElement {
             .join('');
     }
 
+    toggleModal() {
+        this.querySelector('place-bid-modal').classList.toggle('none');
+    }
+
     loadLots() {
         return this.controller.getLots(this.lots.length, this.PACK_SIZE)
             .then(lots => {
                 this.lots = this.lots.concat(lots);
             })
             .then(() => {
-                let tBody = this.querySelector('.bid_body');
-                tBody.innerHTML = this.getLotsTemplate();
+                this.querySelector('.bid_body').innerHTML = this.getLotsTemplate();
+            })
+            .then(() => {
                 for (let row of this.querySelectorAll('tbody .product_info')) {
                     if (!row.classList.contains('sold')) {
                         row.addEventListener('click', e => {
                             row.nextElementSibling.classList.toggle('none');
                         })
                     }
+                }
+            })
+            .then(() => {
+                for (let button of this.querySelectorAll('.add_bid_button')) {
+                    button.addEventListener('click', e => {
+                        this.toggleModal();
+                    }
+                    )
                 }
             })
             .then(() => {
@@ -88,6 +108,7 @@ class Bid extends HTMLElement {
 
         return `
         <div>
+        <place-bid-modal class="none" title="Place bid" placeholder="bid" okEvent="placeBid" cancelEvent="cancel"></place-bid-modal>
             <table class="product_table">
                 <thead>
                     <tr class="product_info">
