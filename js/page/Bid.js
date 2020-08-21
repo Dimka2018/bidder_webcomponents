@@ -13,8 +13,10 @@ class Bid extends HTMLElement {
         this.querySelector('.logout_butt').addEventListener('click', e => this.emmitEvent('logout'));
         this.loadLots();
         this.addEventListener('placeBid', e => {
-            this.controller.saveOrUpdateProduct()
-            this.toggleModal();
+            this.currentLot.bid = e.detail.bid;
+            this.controller.saveOrUpdateProduct(this.currentLot)
+                .then(() => this.loadLots())
+                .then(() => this.toggleModal());
         });
         this.addEventListener('cancel', e => {
             this.toggleModal();
@@ -47,7 +49,7 @@ class Bid extends HTMLElement {
                             '<span>Description: </span>' +
                             '<div class="description">' + lot.description + '</div>' +
                             '<div class="bid_container">' +
-                                '<button class="add_bid_button">place bid</button>' +
+                                '<button id=' + lot.id + ' class="add_bid_button">place bid</button>' +
                             '</div>' +
                         '</div>' +
                     '</td>' +
@@ -80,6 +82,7 @@ class Bid extends HTMLElement {
             .then(() => {
                 for (let button of this.querySelectorAll('.add_bid_button')) {
                     button.addEventListener('click', e => {
+                        this.currentLot = this.lots.filter(lot => lot.id == e.target.id)[0];
                         this.toggleModal();
                     }
                     )
