@@ -2,10 +2,10 @@
 
 Simple web components example
 
-<img src="images/webcomponents.png" alt="react" width="200" height="100"/>
+<img src="images/webcomponents.png" alt="react" width="170" height="100"/>
 
 ##### Technologies:
-* HTML, CSS, JS, React JS
+* HTML, CSS, JS
 * Indexed DB
 
 ![Welcome image](images/welcome.PNG)
